@@ -31,7 +31,7 @@ def add(args):
     entry = snotes_persistence.Entry(current_time,
                                      current_time,
                                      args.tags,
-                                     args.note)
+                                     ' '.join(args.note))
     global journal
     journal.add_or_merge_entry(entry)
     journal.to_file(data_file)
@@ -53,7 +53,7 @@ get_action.add_argument('-t', '--tags', nargs='+')
 get_action.set_defaults(func=get)
 add_action = action_parsers.add_parser('add')
 add_action.add_argument('-t', '--tags', nargs='+')
-add_action.add_argument('-n', '--note', required=True)
+add_action.add_argument('-n', '--note', nargs='+')
 add_action.set_defaults(func=add)
 args = arg_parser.parse_args()
 journal = snotes_persistence.Journal.from_file(data_file)
