@@ -77,13 +77,12 @@ class Journal:
 
 
     def to_file(self, file_name):
-        file = open(file_name, 'w')
-        file.write(' '.join(self.tags))
-        file.write('\n')
-        for entry in self.entries:
-            file.write(entry.to_string(self.tags))
-            file.write('\n')
-        file.close()
+        with open(file_name, 'w') as storage:
+            storage.write(' '.join(self.tags))
+            storage.write('\n')
+            for entry in self.entries:
+                storage.write(entry.to_string(self.tags))
+                storage.write('\n')
 
 
     def get_entries(self, tag_filter, sort):
@@ -93,17 +92,20 @@ class Journal:
     @staticmethod
     def from_file(file_name):
         journal = Journal()
-        file = open(file_name, 'r')
-        line = file.readline().rstrip()
-        if line != '':
-            journal.tags = line.split(' ')
-        line = file.readline().rstrip()
-        while line != '':
-            entry = Entry.from_string(line, journal.tags)
-            journal.add_entry(entry)
-            line = file.readline().rstrip()
-        file.close()
+        with open(file_name, 'r') as storage:
+            line = storage.readline().rstrip()
+
+            if line != '':
+                journal.tags = line.split(' ')
+            line = storage.readline().rstrip()
+
+            while line != '':
+                entry = Entry.from_string(line, journal.tags)
+                journal.add_entry(entry)
+                line = storage.readline().rstrip()
+
         return journal
+
 
 def filter_tags_inclusive(tags1, tags2):
     if not tags1:
